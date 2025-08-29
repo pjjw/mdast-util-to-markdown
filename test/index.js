@@ -4031,6 +4031,13 @@ test('escape', async function (t) {
     )
   })
 
+  await t.test('dont escape single underscores in text', async function () {
+    assert.equal(
+      to({type: 'paragraph', children: [{type: 'text', value: 'a_b'}]}),
+      'a_b\n'
+    )
+  })
+
   await t.test(
     'should escape what would otherwise be code (text)',
     async function () {
