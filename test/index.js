@@ -3952,6 +3952,85 @@ test('escape', async function (t) {
     }
   )
 
+  await t.test('dont escape underscores in headings (atx)', async function () {
+    assert.equal(
+      to({
+        type: 'heading',
+        depth: 2,
+        children: [{type: 'text', value: 'argonaut_reconcile_failures'}]
+      }),
+      '## argonaut_reconcile_failures\n'
+    )
+  })
+
+  await t.test(
+    'dont escape underscores in headings (setext)',
+    async function () {
+      assert.equal(
+        to(
+          {
+            type: 'heading',
+            depth: 2,
+            children: [{type: 'text', value: 'a_b_c'}]
+          },
+          {setext: true}
+        ),
+        'a_b_c\n-----\n'
+      )
+    }
+  )
+
+  await t.test(
+    'dont escape underscores in resource link names',
+    async function () {
+      assert.equal(
+        to(
+          {
+            type: 'paragraph',
+            children: [
+              {type: 'text', value: 'More details can be found here: '},
+              {
+                type: 'link',
+                title: null,
+                url: 'https://helix.corp.mongodb.com/docs/service_catalog/',
+                children: [
+                  {
+                    type: 'text',
+                    value:
+                      'https://helix.corp.mongodb.com/docs/service_catalog/'
+                  }
+                ]
+              }
+            ]
+          },
+          {resourceLink: true}
+        ),
+        'More details can be found here: [https://helix.corp.mongodb.com/docs/service_catalog/](https://helix.corp.mongodb.com/docs/service_catalog/)\n'
+      )
+    }
+  )
+
+  await t.test('dont escape underscores in link references', async function () {
+    assert.equal(
+      to(
+        {
+          type: 'linkReference',
+          children: [
+            {
+              type: 'text',
+              value: 'a_b'
+            }
+          ],
+          label: 'b_c',
+          identifier: 'b_c',
+          referenceType: 'full'
+        },
+        {resourceLink: true}
+      ),
+      '[a_b][b_c]\n'
+    )
+  })
+
   await t.test(
     'should escape what would otherwise be code (text)',
     async function () {
