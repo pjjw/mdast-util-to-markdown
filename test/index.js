@@ -3933,6 +3933,26 @@ test('escape', async function (t) {
   })
 
   await t.test(
+    'should escape what would otherwise be html (2)',
+    async function () {
+      assert.equal(
+        to({type: 'paragraph', children: [{type: 'text', value: '<1%'}]}),
+        '\\<1%\n'
+      )
+    }
+  )
+
+  await t.test(
+    'dont escape a less-than sign that cant be a tag open',
+    async function () {
+      assert.equal(
+        to({type: 'paragraph', children: [{type: 'text', value: 'm<1%'}]}),
+        'm<1%\n'
+      )
+    }
+  )
+
+  await t.test(
     'should escape what would otherwise be code (text)',
     async function () {
       assert.equal(
